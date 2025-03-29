@@ -4,10 +4,14 @@ import Link from 'next/link'
 import React, { useState, useEffect} from 'react'
 import { format } from 'date-fns';
 import  Autocomplete from '../Autocomplete';
+import ImageModal from '../brand-list/imageModal';
 
 function page() {
   const [barnds, setBrands] = useState([]);
   const [brandNameList, setBrandNames] = useState([]);
+   const [modalIsOpen, setIsOpen] = useState(false);
+       const [filePath, setFilePath] = useState("");
+       const [fileType, setTileType] = useState("jpg");
 
   const fetchBrands = async () => {
     try {
@@ -29,6 +33,13 @@ function page() {
   useEffect(() => {
     fetchBrands();
   },[]);
+
+  function viewFile(path){
+    setFilePath(path)
+    setIsOpen(true)
+    const splitName = path.split('.');
+    setTileType(splitName[splitName.length-1])
+  }
 
     return (
         <div className="main-content">
@@ -100,7 +111,9 @@ function page() {
                             <td>
                               <p>{child.name}</p>
                               <p>Brand Owner : {child.brand_owner}</p>
-                              <p>Brand File  <i className="fa fa-edit" /></p>
+                             <p><span onClick={()=>viewFile(child.certificate)} style={{cursor:"pointer"}}>Brand File</span>  
+                               {/* <i className="fa fa-edit" /> */}
+                               </p>
                             </td>
                             <td>
                               <p>Selling  Other Platform : {child.are_you_selling_in_other_platform}</p>
@@ -135,6 +148,7 @@ function page() {
           </div>
         </div>
         {/* container-fluid */}
+         <ImageModal setIsOpen={setIsOpen} modalIsOpen={modalIsOpen} path={filePath} type={fileType}/>
       </div>
     );
 };

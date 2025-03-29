@@ -2,7 +2,7 @@
 import React from "react";
 import Link from 'next/link'
 
-const brandFilter = () => {
+const BrandFilter = () => {
 
 return (
 <div className="single-filter-box">
@@ -45,4 +45,4 @@ return (
 )
 }
 
-export default brandFilter;
+export default BrandFilter;

@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation'
 import Swal from 'sweetalert2'
+import { fileBasePath } from '@/Http/urlHelper'
 
 function page() {
   const router = useRouter();
@@ -277,12 +278,12 @@ function page() {
                             <div className="thumbnail">
                               {product.variant.withImage == "Yes" ? (
                                 <img
-                                  src={`${baseUrl}${variant_thumb_img_path1}${product.variant.image_1}`}
+                                  src={`${fileBasePath}${variant_thumb_img_path1}${product.variant.image_1}`}
                                   alt="shop"
                                 />
                               ) : (
                                 <img
-                                  src={`${baseUrl}${main_thumb_img_path}${product.main_image}`}
+                                  src={`${fileBasePath}${main_thumb_img_path}${product.main_image}`}
                                   alt="shop"
                                 />
                               )}

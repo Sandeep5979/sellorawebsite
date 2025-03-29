@@ -2,6 +2,7 @@
 import { useCart } from '@/app/contaxtData/cartContaxt';
 import { userAppContaxt } from '@/app/contaxtData/userContaxtData';
 import { baseUrl, main_thumb_img_path, variant_thumb_img_path1 } from '@/Http/helper'
+import { fileBasePath } from '@/Http/urlHelper';
 import { useRouter } from 'next/navigation'
 import React, { useContext, useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
@@ -536,12 +537,12 @@ function page() {
                         <a href="#" className="thumbnail">
                           {product.variant.withImage == "Yes" ? (
                             <img
-                              src={`${baseUrl}${variant_thumb_img_path1}${product.variant.image_1}`}
+                              src={`${fileBasePath}${variant_thumb_img_path1}${product.variant.image_1}`}
                               alt="shop"
                             />
                           ) : (
                             <img
-                              src={`${baseUrl}${main_thumb_img_path}${product.main_image}`}
+                              src={`${fileBasePath}${main_thumb_img_path}${product.main_image}`}
                               alt="shop"
                             />
                           )}

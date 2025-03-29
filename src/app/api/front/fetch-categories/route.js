@@ -11,7 +11,7 @@ export async function GET(request) {
     const search = searchParams.get('search') 
 
     try{
-        const query = {status:"Active"}; 
+        const query = {status:"Active", showList:"Yes"}; 
         if(search){
             query.name = { $regex: search, $options: "i" };
         } 
@@ -48,5 +48,16 @@ export async function GET(request) {
     }catch(error){
         console.log(error);
         return responseFun(false,{error},200)
+    }
+}
+
+
+export async function DELET(request) {
+    
+    try{
+        return responseFun(false, "", 500)
+
+    }catch(error){
+        return responseFun(false, "", 500)
     }
 }

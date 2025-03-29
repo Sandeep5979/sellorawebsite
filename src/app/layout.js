@@ -2,7 +2,7 @@
 
 "use client";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+// import "./globals.css";
 import Header from "./(front)/frontComponents/Header";
 import Footer from "./(front)/frontComponents/Footer";
 import { useEffect, useLayoutEffect, useState  } from "react";
@@ -13,6 +13,8 @@ import BackToTop from "./(front)/frontComponents/BackToTop";
 import { AppProvider } from "./contaxtData/contextData";
 import { CartProvider } from "./contaxtData/cartContaxt";
 import { baseUrl } from "@/Http/helper";
+import { sellerUrl } from "@/Http/urlHelper";
+import { CategoryProvider } from "./contaxtData/CategoryProvider";
 
 
 const jQuery = dynamic(() => import('jquery'), { ssr: false });
@@ -34,10 +36,12 @@ const geistMono = Geist_Mono({
 
 export default function RootLayout({ children }) {
 
-
-
-
+ 
   const pathname = usePathname();
+  if(pathname.startsWith('/sellor') || pathname.startsWith('/sellor-dashboard')){
+    window.location.href=sellerUrl
+}
+
   const isCustomLayout  = pathname.startsWith('/sellor') || pathname.startsWith('/sellor-dashboard') || pathname.startsWith('/consumer') || pathname.startsWith('/admin') || pathname.startsWith('/api');
 
   useEffect(() => {
@@ -51,6 +55,7 @@ export default function RootLayout({ children }) {
 
  
   useEffect(()=>{
+  
     $('.logoLoader').css('display', 'none')
   },[pathname])
 
@@ -82,6 +87,7 @@ export default function RootLayout({ children }) {
       
         
         <CartProvider >
+          <CategoryProvider>
         {/* <Header />
         {children}
         <Footer/> */}
@@ -100,6 +106,7 @@ export default function RootLayout({ children }) {
 
     <Script defer src="/front/assets/js/plugins.js"></Script>
     <Script defer src="/front/assets/js/main.js"></Script>
+    </CategoryProvider>
     </CartProvider>
       </body>
     </html>

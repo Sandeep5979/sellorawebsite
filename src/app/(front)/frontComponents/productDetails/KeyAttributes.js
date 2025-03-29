@@ -15,18 +15,23 @@ const KeyAttributes = ({productDetails}) => {
       <div className="row">
         <div className="col-lg-12">
           <div className="title-area-between">
-            <h2 className="title-left"> Key attributes</h2>
+          {productDetails?.dynamicFields.filter((item) => item.field_value && item.field_value.trim() !== "").length > 0 ? (
+              <h2 className="title-left">Key attributes</h2>
+            ) : ""}
+            {/* <h2 className="title-left"> Key attributes</h2> */}
           </div>
         </div>
       </div>
       <div className="row">
         <div className="col-lg-6">
-          <h6>Other attributes</h6>
+          {/* <h6>Other attributes</h6> */}
+
           <div className="additional-information">
+          {productDetails?.dynamicFields.filter((item) => item.field_value && item.field_value.trim() !== "").length > 5 ? (
             <div className="text show-more-height" style={{height:`${showMore?"auto":""}`}}>
             <ul>
                 {productDetails?.dynamicFields?.map((item, index) =>
-                  item.field_value.trim() !== "" ? (
+                  item.field_value && item.field_value?.trim() !== "" ? (
                     <li key={index}>
                       <span>{item.field_name}</span> {item.field_value}
                     </li>
@@ -34,10 +39,16 @@ const KeyAttributes = ({productDetails}) => {
                 )}
             </ul>
             </div>
-            <div className="show-more" onClick={()=>setShowMore(!showMore)}>{showMore?"Show Less":"Show more"}</div>
+
+          ) : ""}
+
+            {productDetails?.dynamicFields.filter((item) => item.field_value && item.field_value.trim() !== "").length > 5 ? (
+              <div className="show-more" onClick={()=>setShowMore(!showMore)}>{showMore?"Show Less":"Show more"}</div>
+            ) : ""}
+           
           </div>
         </div>
-        <div className="col-lg-6">
+        {/* <div className="col-lg-6">
           <h6>&nbsp;</h6>
           <div className="additional-information_right_side">
             <ul>
@@ -53,7 +64,7 @@ const KeyAttributes = ({productDetails}) => {
                
             </ul>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   </div>

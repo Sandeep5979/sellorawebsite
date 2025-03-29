@@ -1,5 +1,5 @@
 import { connectDb } from '../../../../../lib/dbConnect';
-import { brandModel } from '@/Http/Models/branModel';
+import { brandModel, brandSellerModel } from '@/Http/Models/branModel';
 
 
 export async function GET(req) {
@@ -8,13 +8,35 @@ export async function GET(req) {
 
         const url = new URL(req.url);
         const brandModule = url.searchParams.get('brand_module');
-        const query = brandModule ? { status: brandModule } : {};
+        const query = brandModule ? { status: parseInt(brandModule) } : {};
+ 
 
-        const brandList =  await brandModel.find(query).sort({
-          createdAt : -1
-            }).populate('seller_id', '_id name');
+            const brandList =  await brandSellerModel.aggregate([
+              {
+                $match: query
+              },
+              {
+                $lookup: {
+                  from: "sellers",
+                  localField: "seller_id",
+                  foreignField: "_id",
+                  as: "seller_id"
+                }
+              },
+              {
+                $unwind: {
+                  path: "$seller_id",
+                  preserveNullAndEmptyArrays: false  
+                }
+              },
+              {
+                $sort: {
+                  name: 1
+                }
+              }
+                ]) 
 
-        const brandNameList = await brandModel.find(query).select('name').sort({
+        const brandNameList = await brandSellerModel.find(query).select('name').sort({
           name: 1
         });
 

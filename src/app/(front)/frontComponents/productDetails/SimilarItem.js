@@ -8,6 +8,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
+import { fileBasePath } from "@/Http/urlHelper";
+import Image from "next/image";
 
 const SimilarItem = ({ productDetails }) => {
 
@@ -94,9 +96,15 @@ const SimilarItem = ({ productDetails }) => {
                 <div className="single-shopping-card-one deals-of-day">
                   <div className="image-and-action-area-wrapper">
                     <a href={`${baseUrl}/product-details/${product.slug}?pId=${product._id}&vId=${product.variant?._id}`}>
-                      <img
-                        src={`${baseUrl}${main_thumb_img_path}${product.main_image}`}
-                        alt="grocery"
+                      
+                       <Image
+                        src={`${fileBasePath}${main_thumb_img_path}${product.main_image}`}
+                        alt="Product Image"
+                        loading="lazy"
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        style={{ width: 'auto', height: 'auto' }}
                       />
                     </a>
                     <div className="action-share-option">

@@ -1,14 +1,82 @@
 'use client';
 import Link from 'next/link'
 import Product from '../../frontComponents/Product';
-import DepartmentFilter from '../../frontComponents/component/departmentFilter';
-import BrandFilter from '../../frontComponents/component/brandFilter';
-import PriceFilter from '../../frontComponents/component/priceFilter';
-import CustomerReviewFilter from '../../frontComponents/component/customerReviewFilter';
+import DepartmentFilter from '../../frontComponents/component/departmentFilter'; 
+import PriceFilter from '../../frontComponents/component/priceFilter'; 
 import HeaderFilter from '../../frontComponents/component/headerFilter';
+import BrandFilter from '../../frontComponents/component/brandFilter';
+import CustomerReviewFilter from '../../frontComponents/component/customerReviewFilter';
+import { useEffect, useState } from 'react';
+import { baseUrl, formatSlugToName } from '@/Http/helper';
+import { useParams } from 'next/navigation'; 
 
 function page() {
   
+  
+    const params = useParams();
+   
+    const [category, setCategory] = useState('');
+    const [subcategory, setSubcategory] = useState('');
+    const [childcategory, setChildcategory] = useState('');
+    const [products, setProducts] = useState([]);
+  
+    const [prductProccess, setPrductProccess] = useState(false)
+  
+    const fetchProduct = async (category, subcategory, childcategory) => {
+      try {
+        setPrductProccess(true)
+        const url = new URL(`${baseUrl}/api/product`);
+        const queryParams = {
+          category,
+          subcategory,
+          childcategory,
+        };
+  
+        Object.keys(queryParams).forEach((key) => {
+          if (queryParams[key]) {
+            url.searchParams.append(key, queryParams[key]);
+          }
+        });
+        const response = await fetch(url,{method:"POST"});
+        setPrductProccess(false)
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+  
+        const data = await response.json();
+       
+        setProducts(data.data);
+  
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        return [];
+      }
+    } 
+  
+      useEffect(() => {
+        if (params.category) {
+          setCategory(params.category); 
+        }
+        if (params.subcategory) {
+          setSubcategory(params.subcategory);
+        }
+        if (params.childcategory) {
+          setChildcategory(params.childcategory);
+        }
+  
+      }, [params]);
+    
+      useEffect(() => {
+        if (category) {
+          fetchProduct(category, subcategory, childcategory);
+        }
+      }, [category, subcategory, childcategory]); 
+  
+   
+
+
+
+
   return (
     <>
   {/* rts navigation bar area start */}
@@ -17,8 +85,8 @@ function page() {
       <div className="row">
         <div className="col-lg-12">
           <div className="navigator-breadcrumb-wrapper">
-            <Link href="/">Electronics</Link>
-            <i className="fa-regular fa-chevron-right" />
+          <Link href="#"><i className="fa-regular fa-chevron-right" />{formatSlugToName(category)}</Link>
+          
           </div>
         </div>
       </div>
@@ -48,10 +116,10 @@ function page() {
 
         <div className="col-xl-10 col-lg-12">
         
-          <HeaderFilter></HeaderFilter>
+          <HeaderFilter />
 
           <div className="row g-4">
-            <Product/>
+            <Product products={products || []} prductProccess={prductProccess}/>
           </div>
         </div>
       </div>

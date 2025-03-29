@@ -1,4 +1,7 @@
+"use client"
 import { baseUrl, currencyCode, main_thumb_img_path, variant_thumb_img_path1 } from '@/Http/helper'
+import { fileBasePath } from '@/Http/urlHelper'
+import Image from 'next/image'
 import React from 'react'
 
 const OrderDetailsProducts = ({prodData}) => {
@@ -8,12 +11,43 @@ const OrderDetailsProducts = ({prodData}) => {
                           <div className="itemInfo">
                             <div className="itemImg">
     
-                              {prodData.variant_id?.withImage == "Yes" ? (
-                                <img src={`${baseUrl}${variant_thumb_img_path1}${prodData.variant_id?.image_1}`} />
+                            {prodData.variant_id?.withImage === 'Yes' && prodData.variant_id?.image_1 ? (
+                                <Image src={`${fileBasePath}${variant_thumb_img_path1}${prodData.variant_id?.image_1}`} 
+                                alt="Product Image"
+                                width={100}
+                                height={100}
+                                loading="lazy"/>
                               ) : (
-                                <img src={`${baseUrl}${main_thumb_img_path}${prodData.product_id?.main_image}`} />
+                                <Image src={`${fileBasePath}${main_thumb_img_path}${prodData.product_id?.main_image}`} 
+                                alt="Product Image"
+                                width={100}
+                                height={100}
+                                loading="lazy"
+                                />
                               )}
                             </div>
+                            {/* <div className="itemImg">
+                              {prodData.variant_id?.withImage === "Yes" && prodData.variant_id?.image_1 ? (
+                                <img
+                                  src={`${fileBasePath}${variant_thumb_img_path1}${prodData.variant_id.image_1}`}
+                                  alt="Variant Image"
+                                  width={100}
+                                  height={100}
+                                  className="object-cover"
+                                />
+                              ) : (
+                                prodData.product_id?.main_image && (
+                                  <img
+                                    src={`${fileBasePath}${main_thumb_img_path}${prodData.product_id.main_image}`}
+                                    alt="Main Product"
+                                    width={100}
+                                    height={100}
+                                    className="object-cover"
+                                  />
+                                )
+                              )} 
+                            </div>*/}
+
                             <div className="itemDesc">
                               {prodData.order_status === 4 && (
                                 <h3> Delivered 

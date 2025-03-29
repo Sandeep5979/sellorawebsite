@@ -87,12 +87,10 @@ const productSchema = new Schema({
     },
 
     currency:{
-        type:String,
-        default:"USD"
+        type:String, 
     },
     taxCode: {
-        type:String,
-        default:null,
+        type:String, 
     },
     taxRate:{
         type:Number,
@@ -163,6 +161,15 @@ const productVariantSchema = new Schema({
     listingStatus:{
         type:Number,
         enum:[0, 1, 2,3,4] // 0=>Deactive, 1=>Active, 2=> Draft, 3=>Archive, 4=>Delete
+    },
+    approved_status:{
+        type:Number,
+        enum:[0, 1, 2], // 0=>reject, 1=>Approved, 2=> Pending,
+        default:2
+    },
+    approved_Date:{
+        type:Date,
+        default:null
     },
     msrp:Number,
     consumerSalePrice:Number,

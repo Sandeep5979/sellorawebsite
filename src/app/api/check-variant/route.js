@@ -74,7 +74,7 @@ export async function  getProductVariantData(product_id) {
 
 async function structureVariant(variant) {
     try{
-     const threshold = await variantThresholdSchemaModal.find({variant_id : variant._id})
+     const threshold = await variantThresholdSchemaModal.find({variant_id : variant._id}).sort({unit:1})
     const data = {
          _id: variant._id, 
          sku:variant.sku, 

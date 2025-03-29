@@ -375,6 +375,25 @@ function addModeField(){
     setDynamicProductField(updatedData)
   }
 
+  function hendleShowCategory(e, id){
+    const {checked} = e.target;
+    fetch(`${baseUrl}api/admin/update-category-list-status`,{
+      method:"PUT",
+      body:JSON.stringify({checked, id})
+    }).then((response)=>{
+      if(!response.ok){
+        throw new Error("Network error")
+      }
+      return response.json();
+    }).then((res)=>{
+      if(res.status){ 
+        toast.success("Updated successfully")
+      }
+    }).catch((error)=>{
+      toast.error("Update failed")
+    })
+  }
+
   return (
     <div className="main-content">
       <style>
@@ -777,6 +796,7 @@ function addModeField(){
                           <th>Banner Image</th>
                           <th>Listing Image</th>
                           <th>Category Variants</th>
+                          <th>Show Navbar</th>
                           <th>Status</th>
                           <th>Edit</th>
                           <th>Delete</th>
@@ -825,6 +845,12 @@ function addModeField(){
                                 ))}
                                 {/* {JSON.stringify(category?.category_variant)} */}
                                 </td>
+                              <td>
+                                <input type="checkbox" value={"checked"} 
+                                    defaultChecked={category?.showList == "Yes"}
+                                    onClick={(e)=>hendleShowCategory(e, category._id)}
+                                  />
+                              </td>
                               <td><Link href="#" className="active2">{category.status}</Link></td>
                               <td><Link href="#" onClick={() => handleEdit(category)}><i className="fas fa-pencil-alt"></i></Link></td>
                               <td><Link href="#" onClick={() => handleDelete(category._id)}><i className="fas fa-trash-alt"></i></Link></td>

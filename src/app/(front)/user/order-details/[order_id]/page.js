@@ -1,6 +1,6 @@
 "use client"
 import Link from 'next/link'
-import React, { use, useContext, useLayoutEffect, useState } from 'react'
+import React, { use, useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { baseUrl, currencyCode, dateFormat, dateValidateConverter } from '@/Http/helper'
 import '../../../../../../public/front/assets/css/my_order.css'
 import UserSideBarSecction from '../../userSideBarSecction'
@@ -19,7 +19,7 @@ function page({ params }) {
   const { addToCartProduct } = useCart()
 
 
-  useLayoutEffect(() => {
+  useEffect(() => {
 
     if (globalUser.user) {
 
@@ -116,7 +116,7 @@ function page({ params }) {
                   <div className="col-lg-10">
                     <div className="order_dfsd">
                       <ul>
-                        <li>Ordered on {order && dateValidateConverter(order?.createdAt)} </li>
+                        <li>Ordered on {order && order?.createdAt?dateValidateConverter(order?.createdAt):''} </li>
                         <li>Order Id # {order?.order_id}</li>
                       </ul>
                     </div>

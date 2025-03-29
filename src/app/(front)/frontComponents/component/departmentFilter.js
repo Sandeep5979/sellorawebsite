@@ -60,9 +60,9 @@ const DepartmentFilter = () => {
                 <div >
                  <div className="cat_sub_heading"><Link href={`${baseUrl}product/${category?.slug}/${subCategories?.slug}`}>  {subCategories && subCategories.subCategoryName} </Link> </div>
                  {childCategories && childCategories.length>0 ?( 
-                      <ul class="list_cat">
+                      <ul className="list_cat">
                         {childCategories.map((childCate, index)=>(
-                          <li><a href={`${baseUrl}product/${category?.slug}/${childCate.slug}`}>{childCate.childCategoryName}</a></li>
+                          <li key={index}><a href={`${baseUrl}product/${category?.slug}/${childCate.slug}`}>{childCate.childCategoryName}</a></li>
                         ))}
                            
                       </ul> 

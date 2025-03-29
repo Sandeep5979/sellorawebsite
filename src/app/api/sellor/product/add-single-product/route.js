@@ -6,6 +6,85 @@ import { connectDb } from "../../../../../../lib/dbConnect";
 import mongoose from "mongoose";
 import { checkFilePath, moveFile } from "@/app/api/ckeckFilePath/route";
 
+const errors = {};
+const imagePaths = [
+    { thumb: product_thumb_img_path1, medium: product_medium_img_path1, large: product_large_img_path1 },
+    { thumb: product_thumb_img_path2, medium: product_medium_img_path2, large: product_large_img_path2 },
+    { thumb: product_thumb_img_path3, medium: product_medium_img_path3, large: product_large_img_path3 },
+    { thumb: product_thumb_img_path4, medium: product_medium_img_path4, large: product_large_img_path4 }
+];
+
+const imageSizeMap = { large: 1600, medium: 1100, thumb: 400 }; 
+
+const product_large_img_paths = [product_large_img_path2, product_large_img_path3, product_large_img_path4];
+const product_medium_img_paths = [product_medium_img_path2, product_medium_img_path3, product_medium_img_path4];
+const product_thumb_img_paths = [product_thumb_img_path2, product_thumb_img_path3, product_thumb_img_path4];
+  
+
+async function moveImageIfExists(imageIndex, imageFile) { 
+    for (let i = 0; i < product_large_img_paths.length; i++) { 
+        const largPath = `public/${product_large_img_paths[i]}`;
+        const mediumPath = `public/${product_medium_img_paths[i]}`;
+        const thumbPath = `public/${product_thumb_img_paths[i]}`;
+        let exisPath = await checkFilePath(largPath, imageFile); 
+        if (exisPath) {
+            const res= await moveFile(largPath, imageFile, `public/${imagePaths[imageIndex-1].large}`);
+            console.log(largPath, imageFile, `public/${imagePaths[imageIndex-1].large}`, imageIndex);
+            await moveFile(mediumPath, imageFile, `public/${imagePaths[imageIndex-1].medium}`);
+            await moveFile(thumbPath, imageFile, `public/${imagePaths[imageIndex-1].thumb}`);
+        }
+    }
+}
+
+
+const uploadImages = async (image, index, productName) => {
+    const extension = path.extname(image.name);
+    const acceptedExtensions = ['.jpg', '.png', '.jpeg', '.webp'];
+    if (!acceptedExtensions.includes(extension)) {
+        errors[`image_${index}`] = "Image must be jpg, png, jpeg, or webp.";
+        return null;
+    }
+    const filename = `${productName}${index}${Date.now()}.${extension}`;
+    
+    for (const [sizeType, size] of Object.entries(imageSizeMap)) {
+        await uploadImageFun(image, `public/${imagePaths[index - 1][sizeType]}`, filename, size);
+    }
+    return filename;
+};
+
+const deleteOldImages = async (index, existProduct, requestImage) => {
+    const oldPath = existProduct?.[`image_${index}`];
+    if (!requestImage.includes(oldPath)) { 
+        for (const sizeType of Object.keys(imageSizeMap)) {
+            await deleteImageOne(`public/${imagePaths[index - 1][sizeType]}${oldPath}`);
+        }
+    }
+};
+// upload images
+const processImageUpload = async (image, index, existProduct, productName, requestImage) => {
+   
+    if (image && typeof image !== "string") {
+        const newImagePath = await uploadImages(image, index, productName);
+        await deleteOldImages(index, existProduct, requestImage);
+        return newImagePath;
+    } else if (image && image !== "null") {
+       
+        await moveImageIfExists(index, image)
+        // after move delete  old uploaded image
+        if (existProduct && existProduct[`image_${index}`] && existProduct[`image_${index}`] != image) {
+            await deleteOldImages(index, existProduct, requestImage);
+            const oldPath = existProduct[`image_${index}`]
+        }
+        return image;
+    } else if((!image || image == "null") && existProduct[[`image_${index}`]]) {
+        console.log({image, index}, existProduct[`image_${index}`]);
+        await deleteOldImages(index, existProduct, requestImage);
+        return null;
+    }
+};
+
+
+
 export async function POST(request) {
 
     connectDb()
@@ -66,15 +145,15 @@ export async function POST(request) {
     const dynamicFields = dynamicField ? JSON.parse(dynamicField) : [];
     const keyAttributesData = keyAttributes ? JSON.parse(keyAttributes) : [];
 
-    const errors = {};
+   
 
     if (isEmpty(product_name)) errors.product_name = "This field is required";
     if (isEmpty(product_description)) errors.product_description = "This field is required";
     if (isEmpty(search_keywords)) errors.search_keywords = "This field is required";
     if (isEmpty(target_gender)) errors.target_gender = "This field is required";
 
-    if (isEmpty(taxCode)) errors.taxCode = `Tax Code is required.`;
-    if (isEmpty(taxRate)) errors.taxRate = `Tax Rate is required.`;
+    // if (isEmpty(taxCode)) errors.taxCode = `Tax Code is required.`;
+    // if (isEmpty(taxRate)) errors.taxRate = `Tax Rate is required.`;
     if (isEmpty(currency)) errors.currency = `Currency is required.`;
     if (isEmpty(fulfillmentBy)) errors.fulfillmentBy = `This field is required.`;
     if (isEmpty(shippingProvider)) errors.shippingProvider = `This field is required.`;
@@ -134,40 +213,13 @@ export async function POST(request) {
     let main_image_path = main_image || null
     let existProduct = null;
 
-    const image1PathArray = [product_thumb_img_path1, product_medium_img_path1, product_large_img_path1];
-    const image2PathArray = [product_thumb_img_path2, product_medium_img_path2, product_large_img_path2];
-    const image3PathArray = [product_thumb_img_path3, product_medium_img_path3, product_large_img_path3];
-    const image4PathArray = [product_thumb_img_path4, product_medium_img_path4, product_large_img_path4];
-
-    const product_large_img_paths = [product_large_img_path2, product_large_img_path3, product_large_img_path4];
-    const product_medium_img_paths = [product_medium_img_path2, product_medium_img_path3, product_medium_img_path4];
-    const product_thumb_img_paths = [product_thumb_img_path2, product_thumb_img_path3, product_thumb_img_path4];
-
-    const imagePath1UploadArray = [
-        { path: `public/${product_large_img_path1}`, size: 1600 },
-        { path: `public/${product_medium_img_path1}`, size: 1100 },
-        { path: `public/${product_thumb_img_path1}`, size: 400 }
-    ];
-    const imagePath2UploadArray = [
-        { path: `public/${product_large_img_path2}`, size: 1600 },
-        { path: `public/${product_medium_img_path2}`, size: 1100 },
-        { path: `public/${product_thumb_img_path2}`, size: 400 }
-    ];
-
-    const imagePath3UploadArray = [
-        { path: `public/${product_large_img_path3}`, size: 1600 },
-        { path: `public/${product_medium_img_path3}`, size: 1100 },
-        { path: `public/${product_thumb_img_path3}`, size: 400 }
-    ];
-    const imagePath4UploadArray = [
-        { path: `public/${product_large_img_path4}`, size: 1600 },
-        { path: `public/${product_medium_img_path4}`, size: 1100 },
-        { path: `public/${product_thumb_img_path4}`, size: 400 }
-    ];
+    
+    
     if (_id) {
         existProduct = await productModel.findById(_id)
     }
 
+    
     //  upload main image
     if (main_image && typeof main_image != "string") {
 
@@ -183,6 +235,8 @@ export async function POST(request) {
             errors.main_image = "image must be jpg, png,jpeg."
         }
         const shortenedProductName = product_name.length > 6 ? product_name.slice(0, 6).toString().trim() : product_name.toString().trim();
+        const filname_large = `${shortenedProductName}_main_${new Date().toISOString().replace(/[-:.TZ]/g, "")}.${extension}`;
+        const filname_medium = `${shortenedProductName}_main_${new Date().toISOString().replace(/[-:.TZ]/g, "")}.${extension}`;
         const filname = `${shortenedProductName}_main_${new Date().toISOString().replace(/[-:.TZ]/g, "")}.${extension}`;
         const uploadingPath = "public/uploads/product/main_image/";
         await uploadImageFun(main_image, `public/${main_large_img_path}`, filname, 1600)
@@ -199,254 +253,19 @@ export async function POST(request) {
     }
 
     // end upload main image
+    const requestImage = [image_1, image_2, image_3, image_4];
+    const fileShortenedProductName = product_name.length > 6 ? product_name.slice(0, 6).toString().trim() : product_name.toString().trim();
+    image_1_path =await processImageUpload(image_1, 1, existProduct, fileShortenedProductName, requestImage)
+    image_2_path =await processImageUpload(image_2, 2, existProduct, fileShortenedProductName, requestImage)
+    image_3_path =await processImageUpload(image_3, 3, existProduct, fileShortenedProductName, requestImage)
+    image_4_path =await processImageUpload(image_4, 4, existProduct, fileShortenedProductName, requestImage)
 
-    if (image_1 && typeof image_1 != "string") {
-        const extension = path.extname(image_1.name);
-        const accepteExtensions = ['.jpg', '.png', 'jpeg', 'webp'];
-        if (!accepteExtensions.includes(extension)) {
-            errors.image_1 = "image must be jpg, png,jpeg."
-        }
-        const shortenedProductName = product_name.length > 6 ? product_name.slice(0, 6).toString().trim() : product_name.toString().trim();
-        const filname_1 = `${shortenedProductName}1${new Date().toISOString().replace(/[-:.TZ]/g, "")}.${extension}`;
-
-        for (const { path, size } of imagePath1UploadArray) {
-            await uploadImageFun(image_1, path, filname_1, size)
-        }
-        image_1_path = filname_1;
-
-        //   delete image
-        if (existProduct && existProduct.image_1) {
-            const oldPath = existProduct.image_1
-            for (const path of image1PathArray) {
-                await deleteImageOne(`${path}${oldPath}`)
-            }
-
-        }
+    
+ 
+    
 
 
-    } else if (image_1 && image_1 != "null") {
-        // check image 2 path and move 1 
-       
-        for (let i = 0; i < product_large_img_paths.length; i++) {
-            const largPath = `public/${product_large_img_paths[i]}`;
-            const mediumPath = `public/${product_medium_img_paths[i]}`;
-            const thumbPath = `public/${product_thumb_img_paths[i]}`;
-            let exisPath = await checkFilePath(largPath, image_1)
-            if (exisPath) {
-                await moveFile(largPath, image_1, `public/${product_large_img_path1}`)
-                await moveFile(mediumPath, image_1, `public/${product_medium_img_path1}`)
-                await moveFile(thumbPath, image_1, `public/${product_thumb_img_path1}`)
-            }
-        }
-        image_1_path = image_1
-
-        // after move delete  old uploaded image
-        if (existProduct && existProduct.image_1 && existProduct.image_1 != image_1) {
-            const oldPath = existProduct.image_1
-            if (![image_2, image_3, image_4].includes(oldPath)) {
-                for (const path of image1PathArray) {
-                    await deleteImageOne(`${path}${oldPath}`)
-                }
-            }
-        }
-
-
-    } else if ((!image_1 || image_1 == "null") && existProduct?.image_1) {
-        // delete image when image_1 not upload
-        const oldPath = existProduct.image_1
-        for (const path of image1PathArray) {
-            await deleteImageOne(`${path}${oldPath}`)
-        }
-        image_1_path =null
-    }else{
-        image_1_path =null
-    }
-
-    // ======================================image 2 upload section==============================================
-
-    if (image_2 && typeof image_2 != "string") {
-        const extension = path.extname(image_2.name);
-        const accepteExtensions = ['.jpg', '.png', 'jpeg', 'webp'];
-        if (!accepteExtensions.includes(extension)) {
-            errors.image_2 = "image must be jpg, png,jpeg."
-        }
-        const shortenedProductName = product_name.length > 6 ? product_name.slice(0, 6).toString().trim() : product_name.toString().trim();
-        const filname_2 = `${shortenedProductName}2${new Date().toISOString().replace(/[-:.TZ]/g, "")}.${extension}`;
-        for (const { path, size } of imagePath2UploadArray) {
-            await uploadImageFun(image_2, path, filname_2, size)
-        }
-        image_2_path = filname_2;
-
-        //   delete image
-        if (existProduct && existProduct.image_2) {
-            const oldPath = existProduct.image_2
-            if (oldPath != image_1) {
-
-                for (const path of image2PathArray) {
-                    await deleteImageOne(`${path}${oldPath}`)
-                }
-
-            }
-        }
-
-
-    } else if (image_2 && image_2 != "null") {
-        // check image 2 path and move 1 
-         
-        for (let i = 0; i < product_large_img_paths.length; i++) {
-            if(product_large_img_paths[i] =="product_large_img_path2"){
-                continue;
-            }
-            const largPath = `public/${product_large_img_paths[i]}`;
-            const mediumPath = `public/${product_medium_img_paths[i]}`;
-            const thumbPath = `public/${product_thumb_img_paths[i]}`; 
-            let exisPath = await checkFilePath(largPath, image_2)
-            if (exisPath) {
-                await moveFile(largPath, image_2, `public/${product_large_img_path2}`)
-                await moveFile(mediumPath, image_2, `public/${product_medium_img_path2}`)
-                await moveFile(thumbPath, image_2, `public/${product_thumb_img_path2}`)
-            }
-        }
-        image_2_path = image_2
-
-        // after move delete  old uploaded image
-        if (existProduct && existProduct.image_2 && existProduct.image_2 != image_2) {
-            const oldPath2 = existProduct.image_2
-            if (![image_1, image_3, image_4].includes(oldPath2)) {
-                for (const path of image2PathArray) {
-                    await deleteImageOne(`${path}${oldPath2}`)
-                }
-            }
-        }
-
-    } else if ((!image_2 || image_2 == "null") && existProduct?.image_2) {
-        // delete image when image_2 not upload
-        const oldPath = existProduct.image_2
-        if (oldPath != image_1) {
-            for (const path of image2PathArray) {
-                await deleteImageOne(`${path}${oldPath}`)
-            }
-        }
-        image_2_path = null
-    }else{
-        image_2_path = null
-    }
-
-    // =====================================image 3 upload section======================================================
-    if (image_3 && typeof image_3 != "string") {
-        const extension = path.extname(image_3.name);
-        const accepteExtensions = ['.jpg', '.png', 'jpeg', 'webp'];
-        if (!accepteExtensions.includes(extension)) {
-            errors.image_3 = "image must be jpg, png,jpeg."
-        }
-        const shortenedProductName = product_name.length > 6 ? product_name.slice(0, 6).toString().trim() : product_name.toString().trim();
-        const filname_3 = `${shortenedProductName}3${new Date().toISOString().replace(/[-:.TZ]/g, "")}.${extension}`;
-
-
-        for (const { path, size } of imagePath3UploadArray) {
-            await uploadImageFun(image_3, path, filname_3, size)
-        }
-        image_3_path = filname_3;
-
-        //   delete image
-        if (existProduct && existProduct.image_3) {
-            const oldPath = existProduct.image_3
-            if (oldPath != image_2 && oldPath != image_1) {
-                for (const path of image3PathArray) {
-                    await deleteImageOne(`${path}${oldPath}`)
-                }
-            }
-        }
-
-    } else if (image_3 && image_3 != "null") {
-        let exist4Path = await checkFilePath(`public/${product_large_img_path4}`, image_3)
-        if (exist4Path) {
-            await moveFile(`public/${product_large_img_path4}`, image_3, `public/${product_large_img_path3}`)
-            await moveFile(`public/${product_medium_img_path4}`, image_3, `public/${product_medium_img_path3}`)
-            await moveFile(`public/${product_thumb_img_path4}`, image_3, `public/${product_thumb_img_path3}`)
-        }
-
-        image_3_path = image_3 
-        // after move delete  old uploaded image 3
-        if (existProduct && existProduct.image_3 && existProduct.image_3 != image_3) {
-            const oldPath3 = existProduct.image_3
-            if (![image_1, image_2, image_4].includes(oldPath3)) {
-                for (const path of image3PathArray) {
-                    await deleteImageOne(`${path}${oldPath3}`)
-                }
-            }
-        }
-
-
-    } else if ((!image_3 || image_3 == "null") && existProduct?.image_3) {
-        // delete image when image_3 not upload
-        const oldPath = existProduct.image_3
-        if (oldPath != image_2 && oldPath != image_1) {
-
-            for (const path of image3PathArray) {
-                await deleteImageOne(`${path}${oldPath}`)
-            }
-
-        }
-        image_3_path = null
-    }else{
-        image_3_path = null
-    }
-
-
-    // =====================================image 4 upload section======================================================
-
-    if (image_4 && typeof image_4 != "string") {
-        const extension = path.extname(image_4.name);
-        const accepteExtensions = ['.jpg', '.png', 'jpeg', 'webp'];
-        if (!accepteExtensions.includes(extension)) {
-            errors.image_4 = "image must be jpg, png,jpeg."
-        }
-        const shortenedProductName = product_name.length > 6 ? product_name.slice(0, 6).toString().trim() : product_name.toString().trim();
-        const filname_4 = `${shortenedProductName}4${new Date().toISOString().replace(/[-:.TZ]/g, "")}.${extension}`;
-
-        for (const { path, size } of imagePath4UploadArray) {
-            await uploadImageFun(image_4, path, filname_4, size)
-        }
-        image_4_path = filname_4;
-
-        //   delete image
-        if (existProduct && existProduct.image_4) {
-            const oldPath = existProduct.image_4
-            if (![image_2, image_3, image_1].includes(oldPath)) {
-                for (const path of image4PathArray) {
-                    await deleteImageOne(`${path}${oldPath}`)
-                }
-            }
-        }
-
-    } else if(image_4  && image_4 != "null"){
-        image_4_path = image_4;
-
-        // delete old upload image 4 when not upload
-        if(existProduct && existProduct.image_4 && existProduct.image_4 != image_4){
-            const oldPath4 = existProduct.image_4
-            if([image_1,image_2,image_3].includes(oldPath4)){
-                for (const path of image4PathArray) {
-                    await deleteImageOne(`${path}${oldPath4}`)
-                } 
-            }
-        }
-
-    } else if ((!image_4 || image_4 == "null") && existProduct?.image_4 ) {
-        // delete image when image_4 not upload
-        const oldPath = existProduct.image_4
-        
-        if (![image_2, image_3, image_1].includes(oldPath)) {
-            for (const path of image4PathArray) {
-                await deleteImageOne(`${path}${oldPath}`)
-            }
-        }
-         image_4_path= null
-         
-    }else{
-        image_4_path= null
-    }
+  
 
  
     if (Object.keys(errors).length > 0) {

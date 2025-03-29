@@ -197,7 +197,7 @@ function page() {
                                     className="form-control"
                                     placeholder="Enter OTP"
                                     name="otp"
-                                    value={loginData.otp}
+                                    value={loginData.otp || ""}
                                     maxLength={6}
                                     onChange={(e)=>changeOtp(e)}
                                   />

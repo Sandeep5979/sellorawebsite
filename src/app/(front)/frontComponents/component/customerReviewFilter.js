@@ -3,7 +3,7 @@
 import React from "react";
 import Link from 'next/link'
 
-const customerReview = () => {
+const CustomerReviewFilter = () => {
   return (
 <div className="single-filter-box">
 <h5 className="title">Customer Reviews</h5>
@@ -64,4 +64,4 @@ const customerReview = () => {
   )
 }
 
-export default customerReview;
+export default CustomerReviewFilter;

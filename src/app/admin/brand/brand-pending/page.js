@@ -5,11 +5,15 @@ import { format } from 'date-fns';
 import Swal from 'sweetalert2';
 import { baseUrl } from '@/Http/helper';
 import  Autocomplete from '../Autocomplete';
+import ImageModal from '../brand-list/imageModal';
 
 function page() {
  const [barnds, setBrands] = useState([]);
  const [loading, setLoading] = useState(false);
  const [brandNameList, setBrandNames] = useState([]);
+  const [modalIsOpen, setIsOpen] = useState(false);
+      const [filePath, setFilePath] = useState("");
+      const [fileType, setTileType] = useState("jpg");
 
  const handleGithubLookup = async (brandId) => {
     Swal.fire({
@@ -98,6 +102,14 @@ function page() {
     fetchBrands();
   },[]);
 
+  function viewFile(path){
+    setFilePath(path)
+    setIsOpen(true)
+    const splitName = path.split('.');
+    setTileType(splitName[splitName.length-1])
+  }
+
+
     return (
         <div className="main-content">
         <div className="page-content">
@@ -167,7 +179,9 @@ function page() {
                             <td>
                               <p><b>{child.name}</b></p>
                               <p>Brand Owner : {child.brand_owner}</p>
-                              <p>Brand File  <i className="fa fa-edit" /></p>
+                              <p><span onClick={()=>viewFile(child.certificate)} style={{cursor:"pointer"}}>Brand File</span>  
+                               {/* <i className="fa fa-edit" /> */}
+                               </p>
                             </td>
                             <td>
                               <p>Selling  Other Platform : {child.are_you_selling_in_other_platform}</p>
@@ -206,6 +220,7 @@ function page() {
           </div>
         </div>
         {/* container-fluid */}
+        <ImageModal setIsOpen={setIsOpen} modalIsOpen={modalIsOpen} path={filePath} type={fileType}/>
       </div>
     );
 };

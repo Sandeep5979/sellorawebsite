@@ -1,4 +1,5 @@
 import { baseUrl } from '@/Http/helper'
+import { fileBasePath, sellerUrl } from '@/Http/urlHelper'
 import Link from 'next/link'
 import React from 'react'
 
@@ -27,9 +28,9 @@ function Footer() {
                   <li>
                     <Link href="/consumer/career">Careers</Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link href="#">Sellora Category</Link>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </div>
@@ -40,7 +41,7 @@ function Footer() {
               <div className="footer-nav">
                 <ul>
                   <li>
-                    <Link href="/sellor/sell-online" target="_blank">
+                    <Link href={sellerUrl} target="_blank">
                       Become a Seller
                     </Link>
                   </li>
@@ -56,7 +57,7 @@ function Footer() {
                     <Link href="/partner-and-program">Partner and Program</Link>
                   </li>
                   <li>
-                    <Link href="javascript:void(0)">Get Sellora App</Link>
+                    <Link href="#">Get Sellora App</Link>
                   </li>
                 </ul>
               </div>

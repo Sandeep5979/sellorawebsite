@@ -9,6 +9,7 @@ import {main_thumb_img_path} from '@/Http/helper'
 
 import '../../../../Styles/image.css'
 import '../../../../Styles/product_loder.css'
+import { fileBasePath } from '@/Http/urlHelper'
 
 const page = ({ params }) => {
 
@@ -49,7 +50,16 @@ const page = ({ params }) => {
                     <div className="row">
                         <div className="col-lg-10 offset-lg-1">
                             <div className="banner-content-store">
-                                <img src={`${baseUrl}front/assets/images/store_banneer.jpg`} />
+                                {/* <img src={`${baseUrl}front/assets/images/store_banneer.jpg`} /> */}
+                                <Image
+                                        src={`${baseUrl}front/assets/images/store_banneer.jpg`}
+                                        alt="Product Image"
+                                        loading="lazy"
+                                        width={0}
+                                        height={0}
+                                        sizes="100vw"
+                                        style={{ width: '100%', height: 'auto', maxWidth: '100%', maxHeight: '100%' }}
+                                        />
                             </div>
                         </div>
                     </div>
@@ -58,8 +68,17 @@ const page = ({ params }) => {
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-10 offset-lg-1">
-                            <div className="store_logo">
-                                <img src={`${baseUrl}front/assets/images/store_logo.jpg`} />
+                            <div className="store_logo" style={{display:'flex', justifyContent:'center'}}>
+                                {/* <img src={`${baseUrl}front/assets/images/store_logo.jpg`} /> */}
+                                <Image
+                                        src={`${baseUrl}front/assets/images/store_logo.jpg`}
+                                        alt="Product Image"
+                                        loading="lazy"
+                                        width={0}
+                                        height={0}
+                                        sizes="100vw"
+                                        style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '30px' }}
+                                        />
                             </div>
                         </div>
                     </div>
@@ -135,11 +154,16 @@ const page = ({ params }) => {
                                                 <div className="store_product_outer_image_area">
                                                     <a href={`${baseUrl}product-details/${prod.slug}`}>
                                                          <div className='reletive w-full h-full'> 
-                                                        <img src={`${baseUrl}${main_thumb_img_path}${prod.main_image}`} 
-                                                         alt="Product Image" 
-                                                         className='object-cover'
-                                                         layout="fill"
-                                                         />
+                                                        
+                                                          <Image
+                                                                src={`${fileBasePath}${main_thumb_img_path}${prod.main_image}`}
+                                                                alt="Product Image"
+                                                                loading="lazy"
+                                                                width={0}
+                                                                height={0}
+                                                                sizes="100vw"
+                                                                style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '100%' }}
+                                                                />
                                                          </div>
                                                         
                                                            

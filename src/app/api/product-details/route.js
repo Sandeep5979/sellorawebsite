@@ -69,7 +69,10 @@ export async function GET(req) {
 async function getVariant(product_id) {
     try {
       const variantList = await productVariantModel
-        .find({ product_id: new mongoose.Types.ObjectId(product_id) })
+        .find({ 
+          product_id: new mongoose.Types.ObjectId(product_id),
+          listingStatus:1 
+        })
         .sort({ createdAt: -1 });
   
       const variantListWithValue = await Promise.all(

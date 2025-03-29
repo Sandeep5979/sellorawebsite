@@ -31,8 +31,8 @@ const UserRegisterPage = () => {
         confirm_password : '',
         company_name : '',
         address : '',
-        mobile_code:'91',
-        mobile_s_name:'in',
+        mobile_code:'1',
+        mobile_s_name:'us',
         otp:'',
         term_n_condition:'' , 
     })
@@ -43,7 +43,7 @@ const UserRegisterPage = () => {
           
               if (input) {
                 const iti = intlTelInput(phoneInputRef.current, {
-                  initialCountry: userData && userData.country_s_name?userData.country_s_name:'in',
+                  initialCountry: userData && userData.country_s_name?userData.country_s_name:'us',
                   separateDialCode: true,
                   // utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.12/js/utils.js', 
                 });
@@ -63,7 +63,7 @@ const UserRegisterPage = () => {
                   iti.destroy();  
                 };
               }
-            }, [setUserData]);
+            }, [setUserData, userData?.country_s_name]);
 
             
                       const decreeseOtpTime = () => {

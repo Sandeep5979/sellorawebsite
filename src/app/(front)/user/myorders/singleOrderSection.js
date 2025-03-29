@@ -4,6 +4,8 @@
 import { useCart } from '@/app/contaxtData/cartContaxt'
 import { userAppContaxt } from '@/app/contaxtData/userContaxtData'
 import { baseUrl, currencyCode, dateFormat, dateValidateConverter, main_thumb_img_path, variant_thumb_img_path1 } from '@/Http/helper'
+import { fileBasePath } from '@/Http/urlHelper'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useContext, useLayoutEffect, useState } from 'react'
@@ -101,13 +103,35 @@ const SingleOrderSection = ({ order }) => {
                         <p>Package was handed to a receptionist</p>
                         <p>Signed by: Priti.</p> */}
                     <div className="itemInfo">
-                        <div className="itemImg">
+                        {/* <div className="itemImg">
                             {prodData.variant_id?.withImage == "Yes" ? (
-                                <img src={`${baseUrl}${variant_thumb_img_path1}${prodData.variant_id?.image_1}`} />
+                                <img src={`${fileBasePath}${variant_thumb_img_path1}${prodData.variant_id?.image_1}`} />
                             ) : (
-                                <img src={`${baseUrl}${main_thumb_img_path}${prodData.product_id?.main_image}`} />
+                                <img src={`${fileBasePath}${main_thumb_img_path}${prodData.product_id?.main_image}`} />
                             )}
-                        </div>
+                        </div> */}
+
+                            <div className="itemImg">
+                            {prodData.variant_id?.withImage === "Yes" ? (
+                                <Image
+                                src={`${fileBasePath}${variant_thumb_img_path1}${prodData.variant_id?.image_1}`}
+                                alt="Variant Image"
+                                width={100}
+                                height={100}
+                                loading="lazy"
+                                />
+                            ) : (
+                                <Image
+                                src={`${fileBasePath}${main_thumb_img_path}${prodData.product_id?.main_image}`}
+                                alt="Product Image"
+                                width={100}
+                                height={100}
+                                loading="lazy"
+                                />
+                            )}
+                            </div>
+
+
                         <div className="itemDesc">
                             <h4>
                                 {prodData.product_name}

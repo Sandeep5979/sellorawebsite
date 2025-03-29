@@ -188,7 +188,7 @@ const VariantList = ({ attributes, setChangeVariant, setOnClickVarient,
       <div className="price_box_details">
         <ul>
           <li>
-            <span>MRP</span>:
+            <span>MSRP</span>:
             <span className="price_details_old" id="msrp">{changeVariant.msrp ? `${currencyCode(changeVariant.currency)} ${changeVariant.msrp}` : `${currencyCode(changeVariant.currency)} 15`}</span>
           </li>
           <li>
@@ -204,7 +204,8 @@ const VariantList = ({ attributes, setChangeVariant, setOnClickVarient,
       </div>
 
       {/* threshold discount */}
-      {user?.role_consumer_business == "Business" && threshold && threshold.length > 0 && threshold[0].unit > 0 ? (
+       
+      {(!user || user?.role_consumer_business == "Business") && ( threshold && threshold.length > 0 && threshold[0].unit > 0 )? (
         <table className="table_2">
           <tbody>
             <tr>

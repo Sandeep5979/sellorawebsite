@@ -2,7 +2,7 @@
 import React from "react";
 import Link from 'next/link'
 
-const headerFilter = () => {
+const HeaderFilter = () => {
   
 
 return (
@@ -27,4 +27,4 @@ return (
           </div>
 )
 }
-export default headerFilter;
+export default HeaderFilter;

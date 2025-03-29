@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 export async function POST(request) { 
 
-    const {product_id, variant_id, user_id } = await request.json();
+    const {product_id, variant_id, user_id, quantity } = await request.json();
 
     if(!product_id || !variant_id || !user_id){
         return responseFun(false, {message:"user Id, product Id  and variant Id are required"}, 200) 
@@ -21,7 +21,7 @@ export async function POST(request) {
             product_id:product_id,
             variant_id:variant_id,
             product_name:product.product_name,
-            quantity:1
+            quantity:quantity || 1
         }
 
         let cart = await cartModel.findOne({
@@ -31,7 +31,7 @@ export async function POST(request) {
         })
 
         if(cart){
-            cart.quantity +=  1;
+            cart.quantity =  quantity || 1;
             await cart.save();
         }else{
             cart = await cartModel.create(addToCartData)

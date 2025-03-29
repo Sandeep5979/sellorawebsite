@@ -11,7 +11,7 @@ const ProductDetailsSkeletonLoader = () => {
       {/* Brand */}
       <div className="skeleton brand" />
       {/* Product Title */}
-      <div className="skeleton title" />
+      <div className="skeleton skelton-title" />
       {/* Rating & Reviews */}
       <div className="skeleton rating" />
       {/* Price */}

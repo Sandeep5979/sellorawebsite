@@ -36,6 +36,15 @@ const NavCategory = ({ productDetails }) => {
                         </Link>
                       </>
                     )}
+
+              {/* {productDetails  && (
+                    <> 
+                      <i className="fa-regular fa-chevron-right" /> 
+                        <Link href={"#"} className="current" >
+                          { productDetails.product_name}
+                        </Link>
+                      </>
+                    )} */}
                     
                   </div>
                 </div>

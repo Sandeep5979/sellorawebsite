@@ -44,7 +44,7 @@ export const CartProvider= ({ children })=>{
         );
     
         if (existItem) {
-            existItem.quantity += quantity;
+            existItem.quantity = quantity;
         } else { 
             cartSessionData.push(addToCartData);
         }

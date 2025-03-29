@@ -1,73 +1,17 @@
 'use client';
 import { baseUrl, getOffPrecentage, main_thumb_img_path } from '@/Http/helper'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import React from 'react'; 
 import Image from 'next/image';
 import ListingLoaderSkeleton from '@/app/skeleton_loader/listingLoader';
 import { useCart } from '@/app/contaxtData/cartContaxt';
+import { fileBasePath } from '@/Http/urlHelper';
 
-const Product = () => {
+const Product = ({products, prductProccess}) => {
   
-  const params = useParams();
+ 
   const {user} = useCart()
-  const [category, setCategory] = useState('');
-  const [subcategory, setSubcategory] = useState('');
-  const [childcategory, setChildcategory] = useState('');
-  const [products, setProducts] = useState([]);
-
-  const [prductProccess, setPrductProccess] = useState(false)
-
-  const fetchProduct = async (category, subcategory, childcategory) => {
-    try {
-      setPrductProccess(true)
-      const url = new URL(`${baseUrl}/api/product`);
-      const queryParams = {
-        category,
-        subcategory,
-        childcategory,
-      };
-
-      Object.keys(queryParams).forEach((key) => {
-        if (queryParams[key]) {
-          url.searchParams.append(key, queryParams[key]);
-        }
-      });
-      const response = await fetch(url,{method:"POST"});
-      setPrductProccess(false)
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-     
-      setProducts(data.data);
-
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      return [];
-    }
-  } 
-
-    useEffect(() => {
-      if (params.category) {
-        setCategory(params.category); 
-      }
-      if (params.subcategory) {
-        setSubcategory(params.subcategory);
-      }
-      if (params.childcategory) {
-        setChildcategory(params.childcategory);
-      }
-
-    }, [params]);
   
-    useEffect(() => {
-      if (category) {
-        fetchProduct(category, subcategory, childcategory);
-      }
-    }, [category, subcategory, childcategory]); 
-
     if(prductProccess){
       return(
         <div className='row'> 
@@ -76,26 +20,28 @@ const Product = () => {
           ))} 
         </div>
       )
-    }
-   
-   
+    } 
   return (
     <>
-       {products.length > 0 ? (
+       {products && products.length > 0 ? (
           products.map((product, index) => (
         <div className="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12"  key={index}>
           <div className="single-shopping-card-one deals-of-day">
             <div className="image-and-action-area-wrapper">
               
-              <Link href={`${baseUrl}/product-details/${product.slug}?pId=${product._id}&vId=${product.variant?._id}`}>
-              <div className='reletive w-full h-full'> 
-                      <img src={`${baseUrl}${main_thumb_img_path}${product.main_image}`}
-                        alt="Product Image" 
-                        className='object-cover'
-                        layout="fill"
-                        />
+              <Link href={`${baseUrl}/product-details/${product.slug}?pId=${product._id}&vId=${product.variant?._id}`}> 
+                   
+               <div className="w-full flex justify-center items-center" style={{ minHeight: '200px' }}>
+                    <Image
+                      src={`${fileBasePath}${main_thumb_img_path}${product.main_image}`}
+                      alt="Product Image"
+                      loading="lazy"
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '100%' }}
+                    />
                   </div>
-                {/* <img src={`${baseUrl}${main_thumb_img_path}${product.main_image}`}  alt='Product Image'></img> */}
               </Link>
               <div className="action-share-option">
                 <div className="single-action openuptip message-show-action">

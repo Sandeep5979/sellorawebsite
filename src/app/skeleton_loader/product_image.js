@@ -7,8 +7,7 @@ const ProductImageSkeletonLoader = () => {
       {/* Left Side: Image Gallery */}
       <div className="image-gallery row " style={{margin:'0px', paddingRight:'0px'}}>
         <div
-          className="col-lg-2 thumb_img_container"
-         
+          className="col-lg-2 thumb_img_container" 
         >
           <div className="skeleton thumbnail" />
           <div className="skeleton thumbnail" />

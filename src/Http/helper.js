@@ -4,6 +4,7 @@ import crypto from 'crypto';
 // const crypto = require('crypto');
 // require('dotenv').config();
 
+export const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const algorithm = 'aes-256-cbc';  
 const secretKey = process.env.SECRET_KEY || "12hfyutrferhji876tyhgfrtuioldsde";  
@@ -55,6 +56,18 @@ export const product_thumb_img_path4 = "uploads/product/img4/thumb/"
 export const product_medium_img_path4 = "uploads/product/img4/medium/"
 export const product_large_img_path4 = "uploads/product/img4/large/"
 
+export const product_thumb_img_path5 = "uploads/product/img5/thumb/"
+export const product_medium_img_path5 = "uploads/product/img5/medium/"
+export const product_large_img_path5 = "uploads/product/img5/large/"
+
+export const product_thumb_img_path6 = "uploads/product/img6/thumb/"
+export const product_medium_img_path6 = "uploads/product/img6/medium/"
+export const product_large_img_path6 = "uploads/product/img6/large/"
+
+export const product_thumb_img_path7 = "uploads/product/img7/thumb/"
+export const product_medium_img_path7 = "uploads/product/img7/medium/"
+export const product_large_img_path7 = "uploads/product/img7/large/"
+
 //  variant image path 
 export const variant_thumb_img_path1 = "uploads/variant/img1/thumb/"
 export const variant_medium_img_path1 = "uploads/variant/img1/medium/"
@@ -72,19 +85,34 @@ export const variant_thumb_img_path4 = "uploads/variant/img4/thumb/"
 export const variant_medium_img_path4 = "uploads/variant/img4/medium/"
 export const variant_large_img_path4 = "uploads/variant/img4/large/"
 
+export const variant_thumb_img_path5 = "uploads/variant/img5/thumb/"
+export const variant_medium_img_path5 = "uploads/variant/img5/medium/"
+export const variant_large_img_path5 = "uploads/variant/img5/large/"
+
+export const variant_thumb_img_path6 = "uploads/variant/img6/thumb/"
+export const variant_medium_img_path6 = "uploads/variant/img6/medium/"
+export const variant_large_img_path6 = "uploads/variant/img6/large/"
+
+export const variant_thumb_img_path7 = "uploads/variant/img7/thumb/"
+export const variant_medium_img_path7 = "uploads/variant/img7/medium/"
+export const variant_large_img_path7 = "uploads/variant/img7/large/"
+
 
 
 export const isEmpty = (value) => !value || value.trim() === '';
 
-// export function testEmail(email){
-//   const valid =  !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
-// }
+ 
+export function getUSFormatAmount(amount){ 
+  const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  return formattedAmount
+}
 
-// export function testMobile(mobile) { 
-//     const isValid = /^[0-9]{10}$/.test(mobile);
-//     return isValid;
-//   }
-
+export const formatSlugToName = (slug) => {
+  return slug
+    .split("-") // Split by hyphen
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+    .join(" "); // Join words with spaces
+};
 
   export function sendSMSFunction(templeteId, message){
 
